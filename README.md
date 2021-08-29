@@ -17,6 +17,6 @@ There are 4 book covers to choose from. I didn't put too much effort in them, bu
 * Fov change when switching from book to lantern(probably some othe tools aswell). To avoid this - don't switch from book to lantern :smirk:. Holster the book first.
 * Not all cover designs are created equal.
 ## Shoutout
-@DigitalzombieTLD for [FoxCompanion](https://github.com/DigitalzombieTLD/FoxCompanion) mod, I used it as a template. Probably nothing of it left in the code though.
+[@DigitalzombieTLD](https://github.com/DigitalzombieTLD) for [FoxCompanion](https://github.com/DigitalzombieTLD/FoxCompanion) mod, I used it as a template. Probably nothing of it left in the code though.
 
-@ds5678 for helping fix some stuff and revisioning my broken code.
+[@ds5678](https://github.com/ds5678) for helping fix some stuff and revisioning my broken code.
