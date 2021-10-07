@@ -34,6 +34,10 @@ namespace PastimeReading
         private static int firstChar;
         private static int lastChar;
 
+        private static readonly int chunkSize = 100000;
+        private static int splitCurrentSymbol = 0;
+        private static string chunkContents;
+
         // misc
         public static Color bookTitleColor = Color.white;
         public static Color bookAuthorColor = Color.white;
@@ -66,30 +70,33 @@ namespace PastimeReading
 
         public static void InitPages(string stage)
 		{
+            splitCurrentSymbol = 0;
+
             if (stage == "read") // reads from file into variables
             {
                 // load book text
-                StreamReader streamReader = new StreamReader(ReadMain.modsPath + "/pastimeReading/" + PageManager.bookFileName);
+                StreamReader streamReader = new StreamReader(ReadMain.modsPath + "/pastimeReading/" + bookFileName);
                 while (!streamReader.EndOfStream)
                 {
                     for (int i = 0; i < 2; i++)
                     {
                         if (i == 0)
                         {
-                            PageManager.bookTitle = streamReader.ReadLine();
+                            bookTitle = streamReader.ReadLine();
                         }
                         if (i == 1)
                         {
-                            PageManager.bookAuthor = streamReader.ReadLine();
+                            bookAuthor = streamReader.ReadLine();
                         }
                     }
-                    PageManager.bookContents = streamReader.ReadToEnd();
+                    bookContents = streamReader.ReadToEnd();
+                    
                 }
 
-                if (PageManager.bookContents == null || PageManager.bookContents.Length <= 1)
+                if (bookContents == null || bookContents.Length <= 1)
                 {
                     MelonLogger.Msg(ConsoleColor.Yellow, "Book content is empty!");
-                    PageManager.bookContents = PageManager.emptyBookPlaceholder;
+                    bookContents = emptyBookPlaceholder;
                 }
 
             }
@@ -101,65 +108,97 @@ namespace PastimeReading
                 ReadMain.h1Text.fontSize = (float)Settings.options.fontSize;
                 ReadMain.h2Text.fontSize = (float)Settings.options.fontSize;
 
-                PageManager.currentFontSize = (float)Settings.options.fontSize;
+                currentFontSize = (float)Settings.options.fontSize;
 
             }
 
             if (stage == "split") // calculates pages and splits text from variable
             {
-                ReadMain.p1Text.text = PageManager.bookContents; // temporarily set to calculate pages via TMP
 
-                ReadMain.p1Text.ForceMeshUpdate(true); // this is what's taking so long to load texts, without it can't calculate pages correctly
-
-                PageManager.splitPages = new string[ReadMain.p1Text.textInfo.pageCount];
-
-                for (int i = 0; i < ReadMain.p1Text.textInfo.pageCount; i++)
+                splitPages = new string[0];
+                
+                while (bookContents.Length > splitCurrentSymbol)
                 {
-                    PageManager.firstChar = ReadMain.p1Text.textInfo.pageInfo[i].firstCharacterIndex;
-                    PageManager.lastChar = ReadMain.p1Text.textInfo.pageInfo[i].lastCharacterIndex;
+                    bool last = false;
 
-                    if (lastChar > firstChar)
+                    if (bookContents.Length < splitCurrentSymbol + chunkSize)
                     {
-                        PageManager.splitPages[i] = PageManager.bookContents.Substring(firstChar, lastChar - firstChar + 1);
+                        last = true;
+                        chunkContents = bookContents.Substring(splitCurrentSymbol);
                     }
                     else
                     {
-                        PageManager.splitPages[i] = PageManager.bookContents.Substring(firstChar);
+                        chunkContents = bookContents.Substring(splitCurrentSymbol, chunkSize);
                     }
+
+                    ReadMain.p1Text.text = chunkContents; // temporarily set to calculate pages via TMP
+                    ReadMain.p1Text.ForceMeshUpdate(true); 
+
+                    string[] additionChunk = new string[ReadMain.p1Text.textInfo.pageCount];
+
+                    for (int i = 0; i < ReadMain.p1Text.textInfo.pageCount; i++)
+                    {
+                        firstChar = ReadMain.p1Text.textInfo.pageInfo[i].firstCharacterIndex;
+                        lastChar = ReadMain.p1Text.textInfo.pageInfo[i].lastCharacterIndex;
+                        if (lastChar > firstChar)
+                        {
+                            additionChunk[i] = chunkContents.Substring(firstChar, lastChar - firstChar + 1);
+                        }
+                        else
+                        {
+                            additionChunk[i] = chunkContents.Substring(firstChar);
+                        }
+                    }
+
+                    if (!last)
+                    {
+                        splitCurrentSymbol = splitCurrentSymbol + chunkSize - additionChunk[additionChunk.Length - 1].Length; // remove last page(incomplete) from current iteration
+                        Array.Resize(ref additionChunk, additionChunk.Length - 1);
+                    }
+                    else
+                    {
+                        splitCurrentSymbol = splitCurrentSymbol + chunkSize + 1;
+                    }
+
+                    int position = splitPages.Length; // hold array size before resizing
+                    Array.Resize(ref splitPages, position + additionChunk.Length); // resize main array to fit new pages
+                    additionChunk.CopyTo(splitPages, position); // add current chunk to main array
                 }
+
+                
             }
 
             if (stage == "page") // sets current page, should run after "split"
             {
-                if (Settings.options.currentPage < PageManager.splitPages.Length)
+                if (Settings.options.currentPage < splitPages.Length)
                 {
-                    PageManager.currentPage = Settings.options.currentPage;
+                    currentPage = Settings.options.currentPage;
                 }
-                else if (PageManager.splitPages.Length % 2 != 0) // currentPage should be odd
+                else if (splitPages.Length % 2 != 0) // currentPage should be odd
                 {
-                    PageManager.currentPage = PageManager.splitPages.Length;
+                    currentPage = splitPages.Length;
                 }
                 else
                 {
-                    PageManager.currentPage = PageManager.splitPages.Length - 1;
+                    currentPage = splitPages.Length - 1;
                 }
             }
 
             if (stage == "setup")
             {
-                PageManager.TurnpageVisible(false);
+                TurnpageVisible(false);
 
                 // define text field content
-                ReadMain.titleText.text = PageManager.bookTitle;
-                ReadMain.authorText.text = PageManager.bookAuthor;
+                ReadMain.titleText.text = bookTitle;
+                ReadMain.authorText.text = bookAuthor;
 
-                ReadMain.titleText.color = PageManager.bookTitleColor;
-                ReadMain.authorText.color = PageManager.bookAuthorColor;
+                ReadMain.titleText.color = bookTitleColor;
+                ReadMain.authorText.color = bookAuthorColor;
 
-                PageManager.SetPage("p1", PageManager.currentPage);
-                if (PageManager.splitPages.Length > 1)
+                SetPage("p1", currentPage);
+                if (splitPages.Length > 1)
                 {
-                    PageManager.SetPage("p2", PageManager.currentPage + 1);
+                    SetPage("p2", currentPage + 1);
                 }
             }
         }
@@ -169,9 +208,9 @@ namespace PastimeReading
         {
             if (page == "p1")
             {
-                if (num <= PageManager.splitPages.Length)
+                if (num <= splitPages.Length)
                 {
-                    ReadMain.p1Text.text = PageManager.splitPages[num - 1];
+                    ReadMain.p1Text.text = splitPages[num - 1];
                 }
                 else
                 {
@@ -182,9 +221,9 @@ namespace PastimeReading
             }
             if (page == "p2")
             {
-                if (num <= PageManager.splitPages.Length)
+                if (num <= splitPages.Length)
                 {
-                    ReadMain.p2Text.text = PageManager.splitPages[num - 1];
+                    ReadMain.p2Text.text = splitPages[num - 1];
                 }
                 else
                 {
@@ -194,9 +233,9 @@ namespace PastimeReading
             }
             if (page == "h1")
             {
-                if (num <= PageManager.splitPages.Length)
+                if (num <= splitPages.Length)
                 {
-                    ReadMain.h1Text.text = PageManager.splitPages[num - 1];
+                    ReadMain.h1Text.text = splitPages[num - 1];
                 }
                 else
                 {
@@ -206,9 +245,9 @@ namespace PastimeReading
             }
             if (page == "h2")
             {
-                if (num <= PageManager.splitPages.Length)
+                if (num <= splitPages.Length)
                 {
-                    ReadMain.h2Text.text = PageManager.splitPages[num - 1];
+                    ReadMain.h2Text.text = splitPages[num - 1];
                 }
                 else
                 {
@@ -222,31 +261,31 @@ namespace PastimeReading
         // Idle randomizer
         public static void IdleFluc()
 		{
-			PageManager.o += Time.deltaTime;
-			if (PageManager.o <= 0.1f)
+			o += Time.deltaTime;
+			if (o <= 0.1f)
 			{
 				return;
 			}
-			PageManager.o = 0f;
+			o = 0f;
 
-			if (PageManager.f < 1f)
+			if (f < 1f)
 			{
-				PageManager.a += ((PageManager.i == 0) ? 0.03f : -0.03f); // add if i is 0, otherwise substract
-                if (PageManager.a > 0.9f)
+				a += ((i == 0) ? 0.03f : -0.03f); // add if i is 0, otherwise substract
+                if (a > 0.9f)
 				{
-					PageManager.i = 1;
+					i = 1;
 				}
-				if (PageManager.a < 0.1f)
+				if (a < 0.1f)
 				{
-					PageManager.i = 0;
+					i = 0;
 				}
-				ReadMain.handsAnim.SetFloat("idle_random", PageManager.a);
-				PageManager.f += 0.1f;
+				ReadMain.handsAnim.SetFloat("idle_random", a);
+				f += 0.1f;
 				return;
 			}
 
-			PageManager.i = UnityEngine.Random.Range(0, 2);
-			PageManager.f = 0f;
+			i = UnityEngine.Random.Range(0, 2);
+			f = 0f;
 
 			if ((double)UnityEngine.Random.value <= 0.001) // random idle variation
             {
@@ -260,28 +299,28 @@ namespace PastimeReading
 			float animTime = ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).normalizedTime % 1f;
 			if (ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName(state))
 			{
-				if (PageManager.animatorSifter == 0) // state enter
+				if (animatorSifter == 0) // state enter
                 {
-					PageManager.animatorSifter = 1;
-					PageManager.PageFlip("firstFrame");
+					animatorSifter = 1;
+					PageFlip("firstFrame");
 				} 
-				if (animTime > clipTimeStart && PageManager.animatorSifter < 2) // state clipTimeStart % in
+				if (animTime > clipTimeStart && animatorSifter < 2) // state clipTimeStart % in
                 {
-					PageManager.animatorSifter = 2;
-					PageManager.PageFlip("nearFirstFrame");
+					animatorSifter = 2;
+					PageFlip("nearFirstFrame");
 				}
-				if (animTime > clipTimeEnd && PageManager.animatorSifter < 3) // state clipTimeEnd % in
+				if (animTime > clipTimeEnd && animatorSifter < 3) // state clipTimeEnd % in
                 {
-					PageManager.animatorSifter = 3;
-					PageManager.PageFlip("nearLastFrame");
+					animatorSifter = 3;
+					PageFlip("nearLastFrame");
 					return;
 				}
 			}
-			else if (PageManager.animatorSifter != 0) // state exit
+			else if (animatorSifter != 0) // state exit
             {
-				PageManager.animatorSifter = 0;
-				PageManager.PageFlip("lastFrame");
-				PageManager.currentTurn = null;
+				animatorSifter = 0;
+				PageFlip("lastFrame");
+				currentTurn = null;
 				return;
 			}
 		}
@@ -299,60 +338,60 @@ namespace PastimeReading
 
             if (aEvent == "firstFrame") // start of animation
             {
-				PageManager.TurnpageVisible(true);
-				if (PageManager.currentTurn == "next")
+				TurnpageVisible(true);
+				if (currentTurn == "next")
 				{
 					ReadMain.p2.SetActive(false);
-                    PageManager.SetPage("h1", PageManager.currentPage + 2);
-                    PageManager.SetPage("h2", PageManager.currentPage + 1);
-                    PageManager.SetPage("p2", PageManager.currentPage + 3);
+                    SetPage("h1", currentPage + 2);
+                    SetPage("h2", currentPage + 1);
+                    SetPage("p2", currentPage + 3);
 				}
-				if (PageManager.currentTurn == "prev")
+				if (currentTurn == "prev")
 				{
 					ReadMain.p1.SetActive(false);
-                    PageManager.SetPage("h1", PageManager.currentPage);
-                    PageManager.SetPage("h2", PageManager.currentPage - 1);
-                    PageManager.SetPage("p1", PageManager.currentPage - 2);
+                    SetPage("h1", currentPage);
+                    SetPage("h2", currentPage - 1);
+                    SetPage("p1", currentPage - 2);
 				}
 			}
 			if (aEvent == "nearFirstFrame") // first mid point
             {
-				if (PageManager.currentTurn == "next")
+				if (currentTurn == "next")
 				{
 					ReadMain.p2.SetActive(true);
 				}
-				if (PageManager.currentTurn == "prev")
+				if (currentTurn == "prev")
 				{
 					ReadMain.p1.SetActive(true);
 				}
 			}
 			if (aEvent == "nearLastFrame") // second mid point
             {
-				if (PageManager.currentTurn == "next")
+				if (currentTurn == "next")
 				{
 					ReadMain.p1.SetActive(false);
 				}
-				if (PageManager.currentTurn == "prev")
+				if (currentTurn == "prev")
 				{
 					ReadMain.p2.SetActive(false);
 				}
 			}
 			if (aEvent == "lastFrame") // end of animation
             {
-				PageManager.TurnpageVisible(false);
-				if (PageManager.currentTurn == "next")
+				TurnpageVisible(false);
+				if (currentTurn == "next")
 				{
 					ReadMain.p1.SetActive(true);
-                    PageManager.SetPage("p1", PageManager.currentPage + 2);
-                    PageManager.currentPage += 2;
+                    SetPage("p1", currentPage + 2);
+                    currentPage += 2;
 				}
-				if (PageManager.currentTurn == "prev")
+				if (currentTurn == "prev")
 				{
 					ReadMain.p2.SetActive(true);
-                    PageManager.SetPage("p2", PageManager.currentPage - 1);
-                    PageManager.currentPage -= 2;
+                    SetPage("p2", currentPage - 1);
+                    currentPage -= 2;
 				}
-				Settings.options.currentPage = PageManager.currentPage;
+				Settings.options.currentPage = currentPage;
 				Settings.options.Save();
 			}
 		}

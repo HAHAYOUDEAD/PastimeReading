@@ -11,8 +11,8 @@ namespace PastimeReading
         [Section("General settings")]
 
         [Name("Current page")]
-        [Description("Current page. Use to quickly navigate the book.")]
-        [Slider(1f, 199f, 100)]
+        [Description("Current page. Use to quickly navigate the book. \n\nCurrently there's no way to get actual number of pages for your book, so it's set to 999.")]
+        [Slider(1f, 999f, 500)]
         public int currentPage = 1;
 
         [Name("Font size")]
@@ -25,7 +25,7 @@ namespace PastimeReading
         public KeyCode openKeyCode = KeyCode.Alpha5;
 
         [Name("Book texture")]
-        [Description("Book appearance. \n\n You can modify textures yourself. They should be here ...Mods/pastimeReading/textures/")]
+        [Description("Book appearance. \n\nYou can modify textures yourself. They should be here ...Mods/pastimeReading/textures/")]
         [Choice(new string[]
         {
             "variant_A",
@@ -38,7 +38,7 @@ namespace PastimeReading
         [Section("Reload")]
 
         [Name("Reload book from text file?")]
-        [Description("Check this to reload book from file when pressing CONFIRM \n\n WARNING! Avoid loading massive books, the game will hang and crash when it runs out of memory. The plugin that does that allows me to accurately split text into pages, without it I wouldn't be able to make this mod, so it's a compromise I guess. \n\n For example, 300kb text file (about 100 pages) takes about 10 seconds to load on my machine(not a beefy one), keep that in mind.")]
+        [Description("Check this to reload book from file when pressing CONFIRM.")]
         public bool reloadBook;
 
         public static bool settingsChanged;
