@@ -2,8 +2,8 @@
 2nd line of this file is author
 everything below is book content
 
-WARNING! Avoid loading large amount of text. 
+IF YOU SEE SQUARES instead of some special unicode symbols, convert your book to UTF-8. This online tool should do the trick:
+https://subtitletools.com/convert-text-files-to-utf8-online
 
-Plugin used to split text into pages takes it's sweet time(and memory) to compute everything. For reference - 300kb text(about 100 pages) loads in about 10 second on my machine(not a beefy one). 
 
-If you try loading something like 2mb, it will hang, run out of memory and crash. I didn't come up with a solution, so if you want to load something big - split it.
+
