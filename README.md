@@ -9,7 +9,9 @@ Is a mod that allows you to [read a book](https://www.youtube.com/watch?v=MIUvKW
 `H`(holster/put away) to close it.
 ## Installation
 You'll need [ModSettings](https://github.com/zeobviouslyfakeacc/ModSettings/releases). 
-Place `pastimeReading.dll` and `pastimeReading` folder inside your Mods folder.
+Place `pastimeReading.dll` and `pastimeReading` folder inside your `.../Mods` folder.
+
+To load your book, got to `../Mods/pastimeReading` and paste your book in `book.txt`.
 ## Customization
 There are 4 book covers to choose from. I didn't put too much effort in them, but hey - you can change them to your liking. There's even a text color control, more on that in textures folder Readme.
 ## Known Issues
