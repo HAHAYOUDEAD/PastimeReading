@@ -1,6 +1,6 @@
 ## Latest update!
-- Squares are no more! The book now supports at least 35 most used(according to wiki) languages, including, but not limited to: Farsi, Hebrew, Hindi, Japanese and Greek
-- RTL language support! Book can now be changed to open from right side(check the settings)
+- Squares are no more! The book now [supports](https://youtu.be/4JzFo4MwpfQ) at least 35 most used(according to wiki) languages, including, but not limited to: Farsi, Hebrew, Hindi, Japanese and Greek
+- RTL language support! Book can now be changed to open from right side(check the settings). This could not be done without the amazing [pnarimani](https://github.com/pnarimani)'s unity [plugin](https://github.com/pnarimani/RTLTMPro).
 - New bookcover! Not as low-detail as previous ones, and looks pretty cool I think...
 
 ## Pastime Reading
