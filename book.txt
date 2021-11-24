@@ -1,9 +1,0 @@
-1st line of this file is title
-2nd line of this file is author
-everything below is book content
-
-IF YOU SEE SQUARES instead of some special unicode symbols, convert your book to UTF-8. This online tool should do the trick:
-https://subtitletools.com/convert-text-files-to-utf8-online
-
-
-

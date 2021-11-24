@@ -56,19 +56,20 @@ namespace PastimeReading
         private static string currentState = "pocket";
         private static string currentCharacter;
 
+        public static bool isPlayableScene;
+
         public override void OnApplicationStart()
 		{
             // Load main asset
-            ReadMain.loadBundle = AssetBundle.LoadFromFile("Mods/pastimeReading/pastimeReadingAssets.ass");
-			if (ReadMain.loadBundle == null)
+            loadBundle = AssetBundle.LoadFromFile("Mods/pastimeReading/pastimeReadingAssets.ass");
+			if (loadBundle == null)
 			{
-				MelonLogger.Msg("Failed to load AssetBundle");
+				MelonLogger.Msg(ConsoleColor.Yellow, "Failed to load AssetBundle");
 				return;
 			}
 
-
             // Get Mods folder path
-            ReadMain.modsPath = Path.GetFullPath(typeof(MelonMod).Assembly.Location + "\\..\\..\\Mods");
+            modsPath = Path.GetFullPath(typeof(MelonMod).Assembly.Location + "\\..\\..\\Mods");
 
             // Load settings
             Settings.OnLoad();
@@ -76,114 +77,119 @@ namespace PastimeReading
 
 		public override void OnSceneWasInitialized(int level, string name)
 		{
-
-            if (level >= 6 && ReadMain.hands == null)
-			{
+            if (level >= 6 && hands == null)
+            {
                 if (!SoundManager.initDone)
-				{
-					SoundManager.InitSounds();
-				}
+                {
+                    SoundManager.InitSounds();
+                }
+                ReadInstance.ReadInstanceLoad();
 
-				ReadInstance.ReadInstanceLoad();
+                PageManager.InitPages("font");
+                PageManager.InitPages("rtl");
 
-                if (PageManager.bookContents == null)  // if text is not yet loaded
+                if (PageManager.bookContents == null || ReadSettings.settingsChanged == true)  // if text is not yet loaded or settings were changed in main menu
                 {
                     PageManager.InitPages("read");
-                    PageManager.InitPages("font");
                     PageManager.InitPages("split");
                     PageManager.InitPages("page");
+                    ReadSettings.settingsChanged = false;
+                    Settings.options.reloadBook = false;
                 }
 
-
-                PageManager.InitPages("setup"); 
+                PageManager.InitPages("setup");
 
                 // Allow search for vanilla textures since game is now loaded
-                ReadMain.loadVanillaHands = true;
+                loadVanillaHands = true;
             }
-            ReadMain.currentCharacter = null;
-            ReadMain.usingBook = false;
+        }
+
+        public override void OnSceneWasUnloaded(int level, string name) // reset the book on scene unload
+        {
+            currentCharacter = null;
+            usingBook = false;
+            currentState = "pocket";
+            bookClosing = false;
         }
 
 
         private static void StopOnBookClose()
 		{
-			if (ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName("close_book") || ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName("remove_book"))
+			if (handsAnim.GetCurrentAnimatorStateInfo(0).IsName("close_book") || handsAnim.GetCurrentAnimatorStateInfo(0).IsName("remove_book"))
 			{
-                ReadMain.bookClosing = true;
+                bookClosing = true;
 				return;
 			}
-			if (ReadMain.bookClosing) //fire when closing animation ended
+			if (bookClosing) //fire when closing animation ended
             {
-				ReadMain.usingBook = false;
-				ReadMain.bookClosing = false;
+				usingBook = false;
+				bookClosing = false;
             }
 		}
 
 		public override void OnUpdate()
 		{
             // applying vanilla texture to imported hands
-            if (ReadMain.loadVanillaHands)
+            if (loadVanillaHands)
 			{
-				if (ReadMain.vanillaHandsF == null || ReadMain.vanillaHandsM == null)
+                if (vanillaHandsF == null || vanillaHandsM == null)
 				{
 					GameObject meshes = GameObject.Find("CHARACTER_FPSPlayer/NEW_FPHand_Rig/GAME_DATA/Meshes");
-					ReadMain.vanillaHandsF = meshes.transform.FindChild("Astrid_Arms_NoRing").gameObject;
-					ReadMain.vanillaHandsM = meshes.transform.FindChild("Will_Hands").gameObject;
+					vanillaHandsF = meshes.transform.FindChild("Astrid_Arms_NoRing").gameObject;
+					vanillaHandsM = meshes.transform.FindChild("Will_Hands").gameObject;
 				}
 				else
 				{
-					ReadMain.handsFMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = ReadMain.vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
-					ReadMain.handsMMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = ReadMain.vanillaHandsM.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
-					ReadMain.loadVanillaHands = false;
+					handsFMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
+					handsMMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = vanillaHandsM.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
+					loadVanillaHands = false;
 				}
 			}
 
-            
-
             // defining flags to hide book when needed
             bool keyDown = InputManager.GetKeyDown(InputManager.m_CurrentContext, Settings.options.openKeyCode);
-			bool flag = string.IsNullOrEmpty(GameManager.m_ActiveScene) || GameManager.GetPlayerManagerComponent() == null || GameManager.GetPlayerManagerComponent().IsInPlacementMode() || GameManager.GetPlayerManagerComponent().m_ItemInHands != null;
+            bool flag = string.IsNullOrEmpty(GameManager.m_ActiveScene) || GameManager.GetPlayerManagerComponent() == null || GameManager.GetPlayerManagerComponent().IsInPlacementMode() || GameManager.GetPlayerManagerComponent().m_ItemInHands != null;
 
-            if (keyDown && !flag && !InterfaceManager.IsOverlayActiveCached() && !ReadMain.bookClosing)
+            if (keyDown && !flag && !InterfaceManager.IsOverlayActiveCached() && !bookClosing)
 			{
-                if (ReadMain.currentState == "title")
+                if (currentState == "title")
 				{
-                    ReadMain.handsAnim.SetTrigger("open_book");
-					ReadMain.currentState = "open";
+                    handsAnim.SetTrigger("open_book");
+					currentState = "open";
                 }
-				if (ReadMain.currentState == "pocket")
+				if (currentState == "pocket")
 				{
-                    ReadMain.usingBook = true;
-					ReadMain.handsAnim.SetTrigger("bring_book");
-					ReadMain.currentState = "title";
+                    usingBook = true;
+					handsAnim.SetTrigger("bring_book");
+					currentState = "title";
 
                     // fixing FOV
-                    ReadMain.weaponCamera.GetComponent<Camera>().fieldOfView = 37.5f;
+                    weaponCamera.GetComponent<Camera>().fieldOfView = 37.5f;
 
                     // fixing incorrect text when first time opening
-                    //ReadMain.pCam.SetActive(false);
-                    //ReadMain.pCam.SetActive(true);
+                    //pCam.SetActive(false);
+                    //pCam.SetActive(true);
                 }
-			}
+            }
 
-			if (ReadMain.usingBook)
+            if (usingBook)
 			{
                 // switch hands according to current character
-                if (GameManager.GetPlayerManagerComponent().m_VoicePersona == VoicePersona.Female && ReadMain.currentCharacter != "Astrid")
+                if (GameManager.GetPlayerManagerComponent().m_VoicePersona == VoicePersona.Female && currentCharacter != "Astrid")
                 {
-                    ReadMain.handsMMesh.SetActive(false);
-                    ReadMain.handsFMesh.SetActive(true);
-                    ReadMain.currentCharacter = "Astrid";
+                    handsMMesh.SetActive(false);
+                    handsFMesh.SetActive(true);
+                    currentCharacter = "Astrid";
                 }
-                else if (GameManager.GetPlayerManagerComponent().m_VoicePersona == VoicePersona.Male && ReadMain.currentCharacter != "Will")
+                else if (GameManager.GetPlayerManagerComponent().m_VoicePersona == VoicePersona.Male && currentCharacter != "Will")
                 {
-                    ReadMain.handsFMesh.SetActive(false);
-                    ReadMain.handsMMesh.SetActive(true);
-                    ReadMain.currentCharacter = "Will";
+                    handsFMesh.SetActive(false);
+                    handsMMesh.SetActive(true);
+                    currentCharacter = "Will";
                 }
 
                 // tilt book with camera
-                float x = ReadMain.weaponCamera.transform.rotation.eulerAngles.x;
+                float x = weaponCamera.transform.rotation.eulerAngles.x;
                 if (x > 90f) // 90 is looking straight down, 0 is straight ahead
                 {
                     x = 0f;
@@ -191,8 +197,8 @@ namespace PastimeReading
                 float y = (10f / Mathf.Pow(1f + x / 55f, 1.7f) - 23f) / 100f;
 				x = 40f / Mathf.Pow(1f + x / 45f, 2f) - 40f;
 
-				ReadMain.hands.transform.localRotation = Quaternion.Euler(x, 0f, 0f);
-				ReadMain.hands.transform.localPosition = new Vector3(0f, y, 0.05f);
+				hands.transform.localRotation = Quaternion.Euler(x, 0f, 0f);
+				hands.transform.localPosition = new Vector3(0f, y, 0.05f);
 
                 // change page content
                 if (PageManager.currentTurn == "next")
@@ -205,7 +211,7 @@ namespace PastimeReading
 				}
 
                 // make idle animation a bit random
-                if (ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName("book_open_idle") || ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName("book_title_idle"))
+                if (handsAnim.GetCurrentAnimatorStateInfo(0).IsName("book_open_idle") || handsAnim.GetCurrentAnimatorStateInfo(0).IsName("book_title_idle"))
 				{
 					PageManager.IdleFluc();
 				}
@@ -219,23 +225,12 @@ namespace PastimeReading
 				SoundManager.AnimatorStateDJ("prev_page", "playSound_pagePrev");
 
                 // disable this section when closing book
-                ReadMain.StopOnBookClose();
+                StopOnBookClose();
 
                 // smart listener for key presses
-                
-                /*
-                if (InputManager.GetKeyDown(InputManager.m_CurrentContext, KeyCode.L))
-                {
-                    MelonLogger.Msg("3 " + ReadMain.p1Text.textInfo.pageCount);
-                    
-                    PageManager.currentPage += 1;
-                    ReadMain.p1Text.pageToDisplay = PageManager.currentPage;
-                    ReadMain.p2Text.pageToDisplay = PageManager.currentPage + 1;
-                }
-                */
                 if (InputManager.GetRotateClockwiseHeld(InputManager.m_CurrentContext) && !flag)
 				{
-                    if (ReadMain.currentState != "open")
+                    if (currentState != "open")
 					{
 						return;
 					}
@@ -248,11 +243,11 @@ namespace PastimeReading
 						return;
 					}
 					PageManager.currentTurn = "next";
-					ReadMain.handsAnim.SetTrigger("next_page");
+					handsAnim.SetTrigger("next_page");
 				}
 				if (InputManager.GetRotateCounterClockwiseHeld(InputManager.m_CurrentContext) && !flag)
 				{
-					if (ReadMain.currentState != "open")
+					if (currentState != "open")
 					{
 						return;
 					}
@@ -265,44 +260,38 @@ namespace PastimeReading
 						return;
 					}
 					PageManager.currentTurn = "prev";
-					ReadMain.handsAnim.SetTrigger("prev_page");
+					handsAnim.SetTrigger("prev_page");
 				}
 
-                
-
-                // interrupt if pulling up any other tool
-                if ((GameManager.GetPlayerManagerComponent().m_ItemInHands != null || InputManager.HasInteractedThisFrame() || ReadSettings.settingsChanged) && ReadMain.currentState != "pocket")
+                // interrupt if pulling up any other tool, interacting or in struggle
+                if ((GameManager.GetPlayerManagerComponent().m_ItemInHands != null || InputManager.HasInteractedThisFrame() || GameManager.GetPlayerStruggleComponent().InStruggle()) && currentState != "pocket") //  || ReadSettings.settingsChanged
                 {
-                    ReadMain.handsAnim.SetTrigger("remove_book");
-                    ReadMain.currentState = "pocket";
-                    ReadSettings.settingsChanged = false;
+                    handsAnim.SetTrigger("remove_book");
+                    currentState = "pocket";
+                    //ReadSettings.settingsChanged = false;
                 }
 
                 if (InputManager.GetHolsterPressed(InputManager.m_CurrentContext) || flag)
 				{
                     // ignore if menu is opened
+                    
                     if (InterfaceManager.IsOverlayActiveCached())
                     {
                         return;
                     }
-                    if (ReadMain.currentState == "title")
-					{
-						ReadMain.handsAnim.SetTrigger("remove_book");
-						ReadMain.currentState = "pocket";
-
-					}
-					if (ReadMain.currentState == "open")
-					{
-						ReadMain.handsAnim.SetTrigger("close_book");
-						ReadMain.currentState = "pocket";
-					}
                     
+                    if (currentState == "title")
+					{
+						handsAnim.SetTrigger("remove_book");
+						currentState = "pocket";
 
+					}
+					if (currentState == "open")
+					{
+						handsAnim.SetTrigger("close_book");
+						currentState = "pocket";
+					}
                 }
-
-
-
-
             }
 		}
 	}

@@ -41,6 +41,9 @@ namespace PastimeReading
 				child.gameObject.layer = ReadInstance.renderLayer;
 			}
 
+
+            // Get vanilla camera
+            ReadMain.weaponCamera = GameObject.Find("/CHARACTER_FPSPlayer/WeaponView/WeaponCamera");
             // Set parents
             ReadMain.hands.transform.SetParent((ReadMain.weaponCamera != null) ? ReadMain.weaponCamera.transform : null);
 
@@ -86,6 +89,9 @@ namespace PastimeReading
                     break;
                 case 3:
                     texPath = "Mods/pastimeReading/textures/variant_D.png";
+                    break;
+                case 4:
+                    texPath = "Mods/pastimeReading/textures/variant_E.png";
                     break;
             }
             if (File.Exists(texPath))

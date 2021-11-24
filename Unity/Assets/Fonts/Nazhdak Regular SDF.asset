@@ -20,6 +20,7 @@ Texture2D:
   m_MipCount: 1
   m_IsReadable: 1
   m_IgnoreMasterTextureLimit: 0
+  m_IsPreProcessed: 0
   m_StreamingMipmaps: 0
   m_StreamingMipmapsPriority: 0
   m_AlphaIsTransparency: 0
@@ -51,11 +52,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: Nazhdak-Regular SDF
+  m_Name: Nazhdak Regular SDF
   m_EditorClassIdentifier: 
-  hashCode: -1048744235
+  hashCode: 268998712
   material: {fileID: 5176225534015505769}
-  materialHashCode: -1137054914
+  materialHashCode: -1111481576
   m_Version: 1.1.0
   m_SourceFontFileGUID: 76a7fc5020270334f94589da97f5f276
   m_SourceFontFile_EditorRef: {fileID: 0}
@@ -7160,6 +7161,8 @@ MonoBehaviour:
   m_AtlasTextures:
   - {fileID: -4587263922654427646}
   m_AtlasTextureIndex: 0
+  m_IsMultiAtlasTexturesEnabled: 0
+  m_ClearDynamicDataOnBuild: 0
   m_UsedGlyphRects:
   - m_X: 0
     m_Y: 0
@@ -9667,7 +9670,12 @@ MonoBehaviour:
   m_FontFeatureTable:
     m_GlyphPairAdjustmentRecords: []
   fallbackFontAssets: []
-  m_FallbackFontAssetTable: []
+  m_FallbackFontAssetTable:
+  - {fileID: 11400000, guid: 16667b70fd070a14b8377af06140b1cb, type: 2}
+  - {fileID: 11400000, guid: 4e96c187db24bd94b9c3f56ad97cf740, type: 2}
+  - {fileID: 11400000, guid: 1d810cb01bf6ff74ab6e22a9b68e94d8, type: 2}
+  - {fileID: 11400000, guid: 1d3bbb6cd5a46df42942cc55da78b383, type: 2}
+  - {fileID: 11400000, guid: df2722c8794fa52438fb6da83bc21cbb, type: 2}
   m_CreationSettings:
     sourceFontFileName: 
     sourceFontFileGUID: 76a7fc5020270334f94589da97f5f276

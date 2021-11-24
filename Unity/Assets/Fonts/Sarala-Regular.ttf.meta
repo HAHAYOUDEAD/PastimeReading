@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 76a7fc5020270334f94589da97f5f276
+guid: 33917f61ec3080d4eadce7ea1d959bd6
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,11 +8,10 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontName: Nazhdak
+  fontName: Sarala
   fontNames:
-  - Nazhdak
-  fallbackFontReferences:
-  - {fileID: 12800000, guid: 2122f374cfb068149a66cd6be8913d53, type: 3}
+  - Sarala
+  fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0
   ascentCalculationMode: 1

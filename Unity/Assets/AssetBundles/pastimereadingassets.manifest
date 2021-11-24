@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 528260599
+CRC: 1159693072
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a9512343d953bf62bda24bb8e5594a42
+    Hash: 3c58a7fef7c172612cfd1cae89f19249
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 104404d34a794be6331bc0c8a270a78d
+    Hash: d21342f7e4e0e407247b243744e21742
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -20,8 +20,6 @@ ClassTypes:
 - Class: 23
   Script: {instanceID: 0}
 - Class: 28
-  Script: {instanceID: 0}
-- Class: 33
   Script: {instanceID: 0}
 - Class: 43
   Script: {instanceID: 0}
@@ -57,6 +55,7 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 224
   Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/hands_with_book.prefab
 - Assets/coverCam.prefab

@@ -5,5 +5,7 @@ everything below is book content
 IF YOU SEE SQUARES instead of some special unicode symbols, convert your book to UTF-8. This online tool should do the trick:
 https://subtitletools.com/convert-text-files-to-utf8-online
 
+The mod now supports a lot of languages. So if you are 100% SURE that your txt is in UTF-8 and you still see squares - report an issue.
+
 
 

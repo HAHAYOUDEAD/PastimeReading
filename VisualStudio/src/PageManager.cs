@@ -13,6 +13,7 @@ namespace PastimeReading
         public static int currentPage;
         public static float currentFontSize;
         public static int currentBookTexture = Settings.options.bookTexture;
+        public static int currentAlignment = Settings.options.textAlignment;
 
         public static string bookFileName = "book.txt";
 
@@ -34,15 +35,19 @@ namespace PastimeReading
         private static int firstChar;
         private static int lastChar;
 
-        private static readonly int chunkSize = 100000;
+        private static readonly int chunkSize = 10000;
         private static int splitCurrentSymbol = 0;
         private static string chunkContents;
+
+        // RTL
+        private static PastimeReadingRTL.FastStringBuilder pageContentRTL = new PastimeReadingRTL.FastStringBuilder(PastimeReadingRTL.RTLSupport.DefaultBufferSize);
+        public static bool currentlyRTL = Settings.options.enableRTL;
 
         // misc
         public static Color bookTitleColor = Color.white;
         public static Color bookAuthorColor = Color.white;
 
-        private static string emptyBookPlaceholder = 
+        private static readonly string emptyBookPlaceholder = 
             "All work and no play makes Waltz a dull boy.\n" +
             "All work and no play makes Waltz a dull boy.\n " +
             "All work and no play mmakes Waltz a dull boy.\n" +
@@ -72,6 +77,30 @@ namespace PastimeReading
 		{
             splitCurrentSymbol = 0;
 
+            if (stage == "rtl") // manage RTL text orientation, actual characters fix is applied in "Read", should be done before "Read"
+            {
+                currentlyRTL = Settings.options.enableRTL;
+
+                if (currentlyRTL)
+                {
+                    ReadMain.p1Text.isRightToLeftText = true;
+                    ReadMain.p2Text.isRightToLeftText = true;
+                    ReadMain.h1Text.isRightToLeftText = true;
+                    ReadMain.h2Text.isRightToLeftText = true;
+                    ReadMain.titleText.isRightToLeftText = true;
+                    ReadMain.authorText.isRightToLeftText = true;
+                }
+                else
+                {
+                    ReadMain.p1Text.isRightToLeftText = false;
+                    ReadMain.p2Text.isRightToLeftText = false;
+                    ReadMain.h1Text.isRightToLeftText = false;
+                    ReadMain.h2Text.isRightToLeftText = false;
+                    ReadMain.titleText.isRightToLeftText = false;
+                    ReadMain.authorText.isRightToLeftText = false;
+                }
+            }
+
             if (stage == "read") // reads from file into variables
             {
                 // load book text
@@ -90,7 +119,11 @@ namespace PastimeReading
                         }
                     }
                     bookContents = streamReader.ReadToEnd();
-                    
+ 
+                    if (currentlyRTL)
+                    {
+                        bookContents = RTLconvert(bookContents);
+                    }
                 }
 
                 if (bookContents == null || bookContents.Length <= 1)
@@ -101,7 +134,7 @@ namespace PastimeReading
 
             }
 
-            if (stage == "font") // sets up font and check for odd page, should run before "split"
+            if (stage == "font") // sets up font and alignment, should run before "split"
             {
                 ReadMain.p1Text.fontSize = (float)Settings.options.fontSize;
                 ReadMain.p2Text.fontSize = (float)Settings.options.fontSize;
@@ -110,11 +143,40 @@ namespace PastimeReading
 
                 currentFontSize = (float)Settings.options.fontSize;
 
+                switch (Settings.options.textAlignment)
+                {
+                    case 0:
+                        ReadMain.p1Text.alignment = TextAlignmentOptions.TopJustified;
+                        ReadMain.p2Text.alignment = TextAlignmentOptions.TopJustified;
+                        ReadMain.h1Text.alignment = TextAlignmentOptions.TopJustified;
+                        ReadMain.h2Text.alignment = TextAlignmentOptions.TopJustified;
+                        break;
+                    case 1:
+                        ReadMain.p1Text.alignment = TextAlignmentOptions.TopLeft;
+                        ReadMain.p2Text.alignment = TextAlignmentOptions.TopLeft;
+                        ReadMain.h1Text.alignment = TextAlignmentOptions.TopLeft;
+                        ReadMain.h2Text.alignment = TextAlignmentOptions.TopLeft;
+                        break;
+                    case 2:
+                        ReadMain.p1Text.alignment = TextAlignmentOptions.TopRight;
+                        ReadMain.p2Text.alignment = TextAlignmentOptions.TopRight;
+                        ReadMain.h1Text.alignment = TextAlignmentOptions.TopRight;
+                        ReadMain.h2Text.alignment = TextAlignmentOptions.TopRight;
+                        break;
+                    case 3:
+                        ReadMain.p1Text.alignment = TextAlignmentOptions.Top;
+                        ReadMain.p2Text.alignment = TextAlignmentOptions.Top;
+                        ReadMain.h1Text.alignment = TextAlignmentOptions.Top;
+                        ReadMain.h2Text.alignment = TextAlignmentOptions.Top;
+                        break;
+                }
+
+                currentAlignment = Settings.options.textAlignment;
+
             }
 
             if (stage == "split") // calculates pages and splits text from variable
             {
-
                 splitPages = new string[0];
                 
                 while (bookContents.Length > splitCurrentSymbol)
@@ -132,6 +194,7 @@ namespace PastimeReading
                     }
 
                     ReadMain.p1Text.text = chunkContents; // temporarily set to calculate pages via TMP
+
                     ReadMain.p1Text.ForceMeshUpdate(true); 
 
                     string[] additionChunk = new string[ReadMain.p1Text.textInfo.pageCount];
@@ -164,11 +227,9 @@ namespace PastimeReading
                     Array.Resize(ref splitPages, position + additionChunk.Length); // resize main array to fit new pages
                     additionChunk.CopyTo(splitPages, position); // add current chunk to main array
                 }
-
-                
             }
 
-            if (stage == "page") // sets current page, should run after "split"
+            if (stage == "page") // sets current page, ensures the current page is odd, should run after "split"
             {
                 if (Settings.options.currentPage < splitPages.Length)
                 {
@@ -184,25 +245,62 @@ namespace PastimeReading
                 }
             }
 
-            if (stage == "setup")
+            if (stage == "setup") // defines page content, flips the book for RTL, should run last
             {
                 TurnpageVisible(false);
 
-                // define text field content
-                ReadMain.titleText.text = bookTitle;
-                ReadMain.authorText.text = bookAuthor;
+                if (!currentlyRTL) // LTR text
+                {
+                    ReadMain.titleText.text = bookTitle;
+                    ReadMain.authorText.text = bookAuthor;
+                }
+                else // RTL text
+                {
+                    ReadMain.titleText.text = RTLconvert(bookTitle);
+                    ReadMain.authorText.text = RTLconvert(bookAuthor);
+                }
 
                 ReadMain.titleText.color = bookTitleColor;
                 ReadMain.authorText.color = bookAuthorColor;
 
-                SetPage("p1", currentPage);
-                if (splitPages.Length > 1)
+                if (Settings.options.enableRTL)
                 {
-                    SetPage("p2", currentPage + 1);
+                    ReadMain.hands.transform.localScale = new Vector3(-1f, 1f, 1f);
+                    SetPage("p2", currentPage);
+                    if (splitPages.Length > 1)
+                    {
+                        SetPage("p1", currentPage + 1);
+                    }
+                    else
+                    {
+                        ReadMain.p1Text.text = "";
+                        ReadMain.p1PageText.text = "";
+                    }
+                }
+                else
+                {
+                    ReadMain.hands.transform.localScale = new Vector3(1f, 1f, 1f);
+                    SetPage("p1", currentPage);
+                    if (splitPages.Length > 1)
+                    {
+                        SetPage("p2", currentPage + 1);
+                    }
+                    else
+                    {
+                        ReadMain.p2Text.text = "";
+                        ReadMain.p2PageText.text = "";
+                    }
                 }
             }
         }
 
+        public static string RTLconvert(string text)
+        {
+            pageContentRTL.Clear();
+            PastimeReadingRTL.RTLSupport.FixRTL(text, pageContentRTL, false, true, true);
+            pageContentRTL.Reverse();
+            return pageContentRTL.ToString();
+        }
 
         public static void SetPage(string page, int num)
         {
@@ -302,24 +400,24 @@ namespace PastimeReading
 				if (animatorSifter == 0) // state enter
                 {
 					animatorSifter = 1;
-					PageFlip("firstFrame");
+					PageFlip("firstFrame", Settings.options.enableRTL);
 				} 
 				if (animTime > clipTimeStart && animatorSifter < 2) // state clipTimeStart % in
                 {
 					animatorSifter = 2;
-					PageFlip("nearFirstFrame");
+					PageFlip("nearFirstFrame", Settings.options.enableRTL);
 				}
 				if (animTime > clipTimeEnd && animatorSifter < 3) // state clipTimeEnd % in
                 {
 					animatorSifter = 3;
-					PageFlip("nearLastFrame");
+					PageFlip("nearLastFrame", Settings.options.enableRTL);
 					return;
 				}
 			}
 			else if (animatorSifter != 0) // state exit
             {
 				animatorSifter = 0;
-				PageFlip("lastFrame");
+				PageFlip("lastFrame", Settings.options.enableRTL);
 				currentTurn = null;
 				return;
 			}
@@ -333,8 +431,20 @@ namespace PastimeReading
 		}
 
         // Manage text and visibility of pages
-        public static void PageFlip(string aEvent)
+        public static void PageFlip(string aEvent, bool RTL)
 		{
+            string page1 = "p1";
+            string page2 = "p2";
+            string tech1 = "h1";
+            string tech2 = "h2";
+
+            if (RTL)
+            {
+                page1 = "p2";
+                page2 = "p1";
+                tech1 = "h2";
+                tech2 = "h1";
+            }
 
             if (aEvent == "firstFrame") // start of animation
             {
@@ -342,16 +452,16 @@ namespace PastimeReading
 				if (currentTurn == "next")
 				{
 					ReadMain.p2.SetActive(false);
-                    SetPage("h1", currentPage + 2);
-                    SetPage("h2", currentPage + 1);
-                    SetPage("p2", currentPage + 3);
+                    SetPage(tech1, currentPage + 2);
+                    SetPage(tech2, currentPage + 1);
+                    SetPage(page2, currentPage + 3);
 				}
 				if (currentTurn == "prev")
 				{
 					ReadMain.p1.SetActive(false);
-                    SetPage("h1", currentPage);
-                    SetPage("h2", currentPage - 1);
-                    SetPage("p1", currentPage - 2);
+                    SetPage(tech1, currentPage);
+                    SetPage(tech2, currentPage - 1);
+                    SetPage(page1, currentPage - 2);
 				}
 			}
 			if (aEvent == "nearFirstFrame") // first mid point
@@ -382,18 +492,18 @@ namespace PastimeReading
 				if (currentTurn == "next")
 				{
 					ReadMain.p1.SetActive(true);
-                    SetPage("p1", currentPage + 2);
+                    SetPage(page1, currentPage + 2);
                     currentPage += 2;
 				}
 				if (currentTurn == "prev")
 				{
 					ReadMain.p2.SetActive(true);
-                    SetPage("p2", currentPage - 1);
+                    SetPage(page2, currentPage - 1);
                     currentPage -= 2;
 				}
 				Settings.options.currentPage = currentPage;
 				Settings.options.Save();
 			}
-		}
+        }
 	}
 }

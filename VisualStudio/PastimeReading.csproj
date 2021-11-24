@@ -24,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,9 +35,21 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'temp1|AnyCPU'">
+    <OutputPath>bin\temp1\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.1</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -110,12 +123,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\PageManager.cs" />
+    <Compile Include="Src\RTL\RTLEnum.cs" />
+    <Compile Include="Src\RTL\RTLChar32Support.cs" />
+    <Compile Include="Src\RTL\RTLFastStringBuilder.cs" />
+    <Compile Include="Src\RTL\RTLGlyphFix.cs" />
+    <Compile Include="Src\RTL\RTLLigatureFixer.cs" />
+    <Compile Include="Src\RTL\RTLSupport.cs" />
+    <Compile Include="Src\RTL\RTLTextUtils.cs" />
     <Compile Include="Src\SoundManager.cs" />
     <Compile Include="Src\ReadInstance.cs" />
     <Compile Include="Src\ReadMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\ReadSettings.cs" />
     <Compile Include="Src\Settings.cs" />
+    <Compile Include="Src\RTL\RTLTashkilSupport.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
