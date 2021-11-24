@@ -1,3 +1,8 @@
+## Latest update!
+- Squares are no more! The book now supports at least 35 most used(according to wiki) languages, including, but not limited to: Farsi, Hebrew, Hindi, Japanese and Greek
+- RTL language support! Book can now be changed to open from right side(check the settings)
+- New bookcover! Not as low-detail as previous ones, and looks pretty cool I think...
+
 ## Pastime Reading
 Is a mod that allows you to [read a book](https://www.youtube.com/watch?v=MIUvKW89SgI) when there's nothing else to do in your 382-day sandbox.
 ![Poster](Images/Poster.png)
@@ -13,7 +18,7 @@ Place `pastimeReading.dll` and `pastimeReading` folder inside your `../Mods/` fo
 
 To load your book, go to `../Mods/pastimeReading/` and paste your book in `book.txt`.
 ## Customization
-There are 4 book covers to choose from. I didn't put too much effort in them, but hey - you can change them to your liking. There's even a text color control, more on that in textures folder Readme.
+There are 5 book covers to choose from. I didn't put too much effort in them, but hey - you can change them to your liking. There's even a text color control, more on that in textures folder Readme.
 ## Known Issues
 * I don't know much about encoding, so this might be incorrect. But, if you see squares instead of some special unicode symbols, try converting your book to UTF-8. To do that using Notepad++, open your book, select your encoding(likely Windows-1250) and convert to UTF-8. If you don't have Notepad++, you can try using any online tool. For example, [this one](https://subtitletools.com/convert-text-files-to-utf8-online) should work fine.
 * ~~Loading books takes time and memory. This is because I'm using TMPro to accurately split text into pages. For reference, 300kb text takes about 10 seconds to load. And something like 2mb text will hang until you run out of memory and crash the game. If you want to read long books - split them into smaller pieces before loading. For the time being, the mod can only read book.txt, so you'll have to replace it manually when it ends. There are reasons why I didn't make it so it would continue with book2.txt and so on, and laziness is not the main one.~~ Fixed with latest update of the game. 
