@@ -1,6 +1,6 @@
 ## Adding Books
 
-1. Head to [Gutenberg.org] (https://www.gutenberg.org/)
+1. Head to [Gutenberg.org](https://www.gutenberg.org/)
 2. Search for a book in the `Quick search` box OR by clicking `Search and Browse` > `Advanced Search` and typing in your query.
 # See end of README for an example
 3. In the Mods folder open up the folder titled `pastimeReading`
