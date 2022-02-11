@@ -17,6 +17,10 @@ You'll need [ModSettings](https://github.com/zeobviouslyfakeacc/ModSettings/rele
 Place `pastimeReading.dll` and `pastimeReading` folder inside your `../Mods/` folder.
 
 To load your book, go to `../Mods/pastimeReading/` and paste your book in `book.txt`.
+
+## Usage
+If you are not sure how to add your books, or where to get them - check this neat [tutorial](https://github.com/HAHAYOUDEAD/PastimeReading/blob/main/Import%20Your%20Own%20Books/README.md) by [@Ancient Gatekeeper](https://github.com/GamingWubba93) 
+
 ## Customization
 There are 5 book covers to choose from. I didn't put too much effort in them, but hey - you can change them to your liking. There's even a text color control, more on that in textures folder Readme.
 ## Known Issues
