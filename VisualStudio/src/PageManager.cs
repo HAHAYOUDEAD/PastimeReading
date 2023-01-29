@@ -1,11 +1,4 @@
-﻿using System;
-using System.IO;
-using UnityEngine;
-using MelonLoader;
-using TMPro;
-using System.Collections.Generic;
-
-namespace PastimeReading
+﻿namespace PastimeReading
 {
     public static class PageManager
     {
@@ -35,7 +28,7 @@ namespace PastimeReading
         private static int firstChar;
         private static int lastChar;
 
-        private static readonly int chunkSize = 10000;
+        private static readonly int chunkSize = 20000;
         private static int splitCurrentSymbol = 0;
         private static string chunkContents;
 
@@ -193,9 +186,12 @@ namespace PastimeReading
                         chunkContents = bookContents.Substring(splitCurrentSymbol, chunkSize);
                     }
 
-                    ReadMain.p1Text.text = chunkContents; // temporarily set to calculate pages via TMP
+                    ReadMain.p1Text.overflowMode = TextOverflowModes.Page;
+                    ReadMain.p1Text.m_text = chunkContents; // temporarily set to calculate pages via TMP
+                    Utility.Log(CC.Gray, "ForceMeshUpdate - Start");
+                    ReadMain.p1Text.ForceMeshUpdate(true);
+                    Utility.Log(CC.Gray, "ForceMeshUpdate - End, #Pages: " + splitPages.Length);
 
-                    ReadMain.p1Text.ForceMeshUpdate(true); 
 
                     string[] additionChunk = new string[ReadMain.p1Text.textInfo.pageCount];
 
@@ -212,7 +208,7 @@ namespace PastimeReading
                             additionChunk[i] = chunkContents.Substring(firstChar);
                         }
                     }
-
+                    
                     if (!last)
                     {
                         splitCurrentSymbol = splitCurrentSymbol + chunkSize - additionChunk[additionChunk.Length - 1].Length; // remove last page(incomplete) from current iteration
@@ -248,6 +244,11 @@ namespace PastimeReading
             if (stage == "setup") // defines page content, flips the book for RTL, should run last
             {
                 TurnpageVisible(false);
+
+                ReadMain.p1Text.overflowMode = TextOverflowModes.Overflow;
+                ReadMain.p2Text.overflowMode = TextOverflowModes.Overflow;
+                ReadMain.h1Text.overflowMode = TextOverflowModes.Overflow;
+                ReadMain.h2Text.overflowMode = TextOverflowModes.Overflow;
 
                 if (!currentlyRTL) // LTR text
                 {

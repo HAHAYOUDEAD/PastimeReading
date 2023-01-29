@@ -1,7 +1,4 @@
-﻿// ReSharper disable IdentifierTypo
-// ReSharper disable CommentTypo
-
-namespace PastimeReadingRTL
+﻿namespace PastimeReadingRTL
 {
     public static class RTLSupport
     {

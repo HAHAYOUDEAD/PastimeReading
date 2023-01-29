@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace PastimeReading
+﻿namespace PastimeReading
 {
 	public static class SoundManager
 	{
@@ -10,7 +8,7 @@ namespace PastimeReading
         public static void InitSounds()
 		{
 			AkSoundEngine.AddBasePath(ReadMain.modsPath);
-            AkSoundEngine.LoadFilePackage("pastimeReading/pastimeReadingSounds.pck", out uint num, AkSoundEngine.AK_DEFAULT_POOL_ID);
+            AkSoundEngine.LoadFilePackage("pastimeReading/pastimeReadingSounds.pck", out uint num);
             SoundManager.initDone = true;
 		}
 
@@ -30,5 +28,22 @@ namespace PastimeReading
 				SoundManager.stateLast = null;
 			}
 		}
+
+		public static void AnimatorStateDJAC(string animState, AudioClip clip)
+		{
+            if (ReadMain.handsAnim.GetCurrentAnimatorStateInfo(0).IsName(animState))
+            {
+                if (SoundManager.stateLast != animState)
+                {
+					// play clip
+                }
+                SoundManager.stateLast = animState;
+                return;
+            }
+            if (SoundManager.stateLast == animState)
+            {
+                SoundManager.stateLast = null;
+            }
+        }
 	}
 }

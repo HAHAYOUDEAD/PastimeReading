@@ -1,14 +1,11 @@
-﻿using System;
-using System.IO;
-using MelonLoader;
-using TMPro;
-using UnityEngine;
-
-namespace PastimeReading
+﻿namespace PastimeReading
 {
 	public static class ReadInstance
 	{
         private static readonly int renderLayer = LayerMask.NameToLayer("Weapon");
+
+        public static readonly Shader vanillaSkinShader = Shader.Find("Shader Forge/TLD_StandardSkinned");
+        public static readonly Shader vanillaDefaultShader = Shader.Find("Shader Forge/TLD_StandardDiffuse");
 
         public static void ReadInstanceLoad()
 		{
@@ -26,30 +23,34 @@ namespace PastimeReading
 			ReadMain.handsFMesh = ReadMain.hands.transform.Find("readingArmsF").gameObject;
 			ReadMain.handsMMesh = ReadMain.hands.transform.Find("readingArmsM").gameObject;
 
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Instantiated");
+
             // Get vanilla camera
             ReadMain.weaponCamera = GameObject.Find("/CHARACTER_FPSPlayer/WeaponView/WeaponCamera");
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Found camera");
 
             // Assign book texture
             ReadInstance.UpdateBookTexture();
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Book texture update");
 
             // Get Animator
             ReadMain.handsAnim = ReadMain.hands.GetComponent<Animator>();
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Found animator");
 
-            // Set render layer ("Weapon" snaps object to player, sets zTest to always)
+            // Set object layer ("Weapon" snaps object to player, sets zTest to always)
             foreach (Transform child in ReadMain.hands.GetComponentsInChildren<Transform>())
 			{
 				child.gameObject.layer = ReadInstance.renderLayer;
 			}
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Layer set");
 
-
-            // Get vanilla camera
-            ReadMain.weaponCamera = GameObject.Find("/CHARACTER_FPSPlayer/WeaponView/WeaponCamera");
             // Set parents
             ReadMain.hands.transform.SetParent((ReadMain.weaponCamera != null) ? ReadMain.weaponCamera.transform : null);
 
 			ReadMain.cCam.transform.SetParent(ReadMain.hands.transform);
 			ReadMain.pCam.transform.SetParent(ReadMain.hands.transform);
 			ReadMain.hCam.transform.SetParent(ReadMain.hands.transform);
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Parented");
 
             // Get Pages
             ReadMain.turnpage = ReadMain.hands.transform.Find("readingBook_turnpage").gameObject;
@@ -71,6 +72,7 @@ namespace PastimeReading
 			ReadMain.h2Text = ReadMain.hCam.transform.GetChild(1).GetComponent<TMP_Text>();
 			ReadMain.h1PageText = ReadMain.hCam.transform.GetChild(2).GetComponent<TMP_Text>();
 			ReadMain.h2PageText = ReadMain.hCam.transform.GetChild(3).GetComponent<TMP_Text>();
+            Utility.Log(CC.Gray, "ReadInstanceLoad - Book loaded");
         }
 
         public static void UpdateBookTexture()
@@ -79,26 +81,34 @@ namespace PastimeReading
             switch (Settings.options.bookTexture)
             {
                 case 0:
-                    texPath = "Mods/pastimeReading/textures/variant_A.png";
+                    texPath = "Mods/pastimeReading/textures/simpleRed.png";
                     break;
                 case 1:
-                    texPath = "Mods/pastimeReading/textures/variant_B.png";
+                    texPath = "Mods/pastimeReading/textures/simpleBlue.png";
                     break;
                 case 2:
-                    texPath = "Mods/pastimeReading/textures/variant_C.png";
+                    texPath = "Mods/pastimeReading/textures/simpleWhite.png";
                     break;
                 case 3:
-                    texPath = "Mods/pastimeReading/textures/variant_D.png";
+                    texPath = "Mods/pastimeReading/textures/simpleYellow.png";
                     break;
                 case 4:
-                    texPath = "Mods/pastimeReading/textures/variant_E.png";
+                    texPath = "Mods/pastimeReading/textures/detailGray.png";
+                    break;
+                case 5:
+                    texPath = "Mods/pastimeReading/textures/detailYellow.png";
+                    break;
+                case 6:
+                    texPath = "Mods/pastimeReading/textures/derailBlack.png";
                     break;
             }
             if (File.Exists(texPath))
             {
                 Texture2D bookTex = new Texture2D(2, 2);
+                GameObject bookMesh = ReadMain.hands.transform.Find("readingBook").gameObject;
                 ImageConversion.LoadImage(bookTex, File.ReadAllBytes(texPath));
-                ReadMain.hands.transform.Find("readingBook").gameObject.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture = bookTex;
+                bookMesh.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture = bookTex;
+                bookMesh.GetComponent<SkinnedMeshRenderer>().sharedMaterial.shader = vanillaSkinShader;
 
                 PageManager.bookTitleColor = bookTex.GetPixel(1, 0);
                 PageManager.bookAuthorColor = bookTex.GetPixel(5, 0);

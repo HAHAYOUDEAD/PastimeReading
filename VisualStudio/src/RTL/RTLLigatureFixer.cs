@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace PastimeReadingRTL
+﻿namespace PastimeReadingRTL
 {
     public static class LigatureFixer
     {

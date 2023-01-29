@@ -1,11 +1,18 @@
-﻿using System;
-using System.IO;
-using MelonLoader;
-using ModSettings;
-using UnityEngine;
+﻿using ModSettings;
 
 namespace PastimeReading
 {
+    internal static class Settings
+    {
+        public static void OnLoad()
+        {
+            options = new ReadSettings();
+            options.AddToModSettings("Pastime Reading Settings");
+        }
+
+        public static ReadSettings options;
+    }
+
     internal class ReadSettings : JsonModSettings
     {
         [Section("General settings")]
@@ -35,10 +42,19 @@ namespace PastimeReading
         })]
         public int textAlignment;
 
+        [Name("Time slowdown")]
+        [Description("Slowdown time while reading so you can immerse yourself better into the story. Doesn't affect wildlife. \n\nDefault: 1")]
+        [Slider(0.1f, 1f, 10)]
+        public float timeScale = 1f;
+
+        [Name("Disable interactions")]
+        [Description("Disable interactions while reading. You can still interact while looking over the book. \n\nSince it wasn't a feature before, Default: false")]
+        public bool disableInteraction = false;
+
         [Section("Controls")]
 
         [Name("Keybinding")]
-        [Description("The key you press to take out the book. Press again to open it. Holster to close.")]
+        [Description("The key you press to take out the book. Press again to open it. Flip pages with left/right action(Q and E). Holster to close. \n\nDefault: 5")]
         public KeyCode openKeyCode = KeyCode.Alpha5;
 
         [Section("Customization")]
@@ -47,11 +63,13 @@ namespace PastimeReading
         [Description("Book appearance. \n\nYou can modify textures yourself. They should be here ...Mods/pastimeReading/textures/")]
         [Choice(new string[]
         {
-            "variant_A",
-            "variant_B",
-            "variant_C",
-            "variant_D",
-            "variant_E",
+            "Simple Red",
+            "Simple Blue",
+            "Simple White",
+            "Simple Yellow",
+            "Detailed Grey",
+            "Detailed Yellow",
+            "Detailed Black",
         })]
         public int bookTexture;
 
@@ -60,6 +78,12 @@ namespace PastimeReading
         [Name("Reload book from text file?")]
         [Description("Check this to reload book from file when pressing CONFIRM.")]
         public bool reloadBook;
+
+        [Section("Debug")]
+
+        [Name("Enable debug messages")]
+        [Description("")]
+        public bool debugLog = true;
 
         public static bool settingsChanged;
 
@@ -125,6 +149,14 @@ namespace PastimeReading
             {
                 PageManager.InitPages("font");
             }
+
+            if (ReadMain.bookIsOpened)
+            {
+                Time.timeScale = Settings.options.timeScale;
+                GameManager.m_GlobalTimeScale = Settings.options.timeScale;
+                ReadMain.handsAnim.updateMode = Settings.options.timeScale == 1f ? AnimatorUpdateMode.Normal : AnimatorUpdateMode.UnscaledTime;
+            }
+
         }
 	}
 }

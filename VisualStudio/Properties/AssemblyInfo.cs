@@ -1,21 +1,20 @@
-﻿using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
-using System.Security;
-using System.Security.Permissions;
 using MelonLoader;
-using PastimeReading;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
-[assembly: AssemblyVersion("1.0.0.0")]
+//This is a C# comment. Comments have no impact on compilation.
+
+//ModName, ModVersion, ModAuthor, and ModNamespace.ModClassInheritingFromMelonMod all need changed.
+
 [assembly: AssemblyTitle("PastimeReading")]
-[assembly: AssemblyDescription("Read something while waiting for the end")]
-[assembly: AssemblyCompany("Waltz")]
-[assembly: AssemblyProduct("PastimeReading")]
-[assembly: ComVisible(false)]
-[assembly: Guid("288b5e55-e8ec-46ec-a841-fd543ef5b1b8")]
-[assembly: AssemblyFileVersion("1.2.0")]
-[assembly: MelonInfo(typeof(ReadMain), "PastimeReading", "1.2.0", "Waltz, ds5678", null)]
+[assembly: AssemblyCopyright("Created by Waltz")]
+
+//Version numbers in C# are a set of 1 to 4 positive integers separated by periods.
+//Mods typically use 3 numbers. For example: 1.2.1
+//The mod version need specified in three places.
+[assembly: AssemblyVersion("1.2.1")]
+[assembly: AssemblyFileVersion("1.2.1")]
+[assembly: MelonInfo(typeof(PastimeReading.ReadMain), "PastimeReading", "1.2.1", "Waltz", null)]
+
+//This tells MelonLoader that the mod is only for The Long Dark.
 [assembly: MelonGame("Hinterland", "TheLongDark")]
