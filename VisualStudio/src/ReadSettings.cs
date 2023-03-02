@@ -48,14 +48,23 @@ namespace PastimeReading
         public float timeScale = 1f;
 
         [Name("Disable interactions")]
-        [Description("Disable interactions while reading. You can still interact while looking over the book. \n\nSince it wasn't a feature before, Default: false")]
-        public bool disableInteraction = false;
+        [Description("Disable interactions while reading. You can still interact while looking over the book. \n\nDoesn't work well with classic book tilt, since you can't really look over the book\n\nSince new tilt is enabled by default, Default: true")]
+        public bool disableInteraction = true;
 
         [Section("Controls")]
 
         [Name("Keybinding")]
         [Description("The key you press to take out the book. Press again to open it. Flip pages with left/right action(Q and E). Holster to close. \n\nDefault: 5")]
         public KeyCode openKeyCode = KeyCode.Alpha5;
+
+        [Name("Book tilt")]
+        [Description("Change book tilt based on Y mouse movement. New behavior allows you to see more when looking forward\n\nDefault: New")]
+        [Choice(new string[]
+        {
+            "New",
+            "Classic"
+        })]
+        public int bookTilt;
 
         [Section("Customization")]
 
@@ -83,7 +92,7 @@ namespace PastimeReading
 
         [Name("Enable debug messages")]
         [Description("")]
-        public bool debugLog = true;
+        public bool debugLog = false;
 
         public static bool settingsChanged;
 
@@ -156,6 +165,7 @@ namespace PastimeReading
                 GameManager.m_GlobalTimeScale = Settings.options.timeScale;
                 ReadMain.handsAnim.updateMode = Settings.options.timeScale == 1f ? AnimatorUpdateMode.Normal : AnimatorUpdateMode.UnscaledTime;
             }
+
 
         }
 	}

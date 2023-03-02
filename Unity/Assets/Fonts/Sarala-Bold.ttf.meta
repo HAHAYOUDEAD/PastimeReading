@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 6416836e5672936428d051c53f18bf7e
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Sarala
+  fontNames:
+  - Sarala
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 33917f61ec3080d4eadce7ea1d959bd6, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

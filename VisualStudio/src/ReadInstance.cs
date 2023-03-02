@@ -99,7 +99,7 @@
                     texPath = "Mods/pastimeReading/textures/detailYellow.png";
                     break;
                 case 6:
-                    texPath = "Mods/pastimeReading/textures/derailBlack.png";
+                    texPath = "Mods/pastimeReading/textures/detailBlack.png";
                     break;
             }
             if (File.Exists(texPath))

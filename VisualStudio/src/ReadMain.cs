@@ -60,6 +60,9 @@
 
         public static bool gameStarted;
 
+        public static readonly float iteractionAllowanceAngle = 27f;
+
+
         public override void OnApplicationStart()
 		{
             // Load main asset
@@ -228,13 +231,20 @@
                     x = 0f;
                 }
 
-                if (x < 23f) lockInteraction = false;
+                if (x < iteractionAllowanceAngle) lockInteraction = false;
                 else if (bookIsOpened) lockInteraction = true;
 
 
                 float y = (10f / Mathf.Pow(1f + x / 55f, 1.7f) - 23f) / 100f;
-                x = 50f / Mathf.Pow(1f + (x - 8f) / 50f, 1.2f) - 50f; // better
-                //x = 40f / Mathf.Pow(1f + x / 45f, 2f) - 40f; // classic
+
+                if (Settings.options.bookTilt == 0)
+                {
+                    x = 50f / Mathf.Pow(1f + (x - 8f) / 50f, 1.2f) - 50f; // better
+                }
+                else
+                {
+                    x = 40f / Mathf.Pow(1f + x / 45f, 2f) - 40f; // classic
+                }
 
                 hands.transform.localRotation = Quaternion.Euler(x, 0f, 0f);
                 hands.transform.localPosition = new Vector3(0f, y, 0.05f);

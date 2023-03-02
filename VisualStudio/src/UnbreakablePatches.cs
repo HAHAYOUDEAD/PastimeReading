@@ -2,6 +2,7 @@
 
 namespace PastimeReading
 {
+    
     [HarmonyPatch(typeof(PlayerManager), "ShouldSuppressCrosshairs")]
     public class HideCrosshairWhileUsingBook
     {
@@ -9,10 +10,10 @@ namespace PastimeReading
         private static void Postfix(ref bool __result)
         {
             //if (ReadMain.lockInteraction) __result = true;
-            __result = __result || ReadMain.lockInteraction;
+            __result = __result || (ReadMain.lockInteraction && Settings.options.disableInteraction);
         }
     }
-
+    /*
     [HarmonyPatch(typeof(InputManager), "ExecuteInteractAction")]
     public class DisableInteractionsWhenUsingBook
     {
@@ -26,24 +27,25 @@ namespace PastimeReading
             return true;
         }
     }
-
+    /*
     [HarmonyPatch(typeof(PlayerManager), "UpdateHUDText")]
     public class DisableHoverTextWhenUsingBook
     {
 
-        private static bool Prefix()
+        private static void Prefix()
         {
-            if (ReadMain.lockInteraction)
+            if (ReadMain.lockInteraction && Settings.options.disableInteraction)
             {
                 if (InterfaceManager.GetPanel<Panel_HUD>().m_HoverTextObject.activeSelf)
                 {
                     InterfaceManager.GetPanel<Panel_HUD>().m_HoverTextObject.SetActive(false);
                 }
-                return false;
+                //return true;
             }
-            return true;
+            //return true;
         }
     }
+    */
 
     [HarmonyPatch(typeof(BaseAi), "Update")]
     public class ResetWildLifeAnimatorsWhileSlowdown
