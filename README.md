@@ -1,7 +1,13 @@
-## Latest update!
-- Squares are no more! The book now [supports](https://youtu.be/4JzFo4MwpfQ) at least 35 most used(according to wiki) languages, including, but not limited to: Farsi, Hebrew, Hindi, Japanese and Greek
-- RTL language support! Book can now be changed to open from right side(check the settings). This could not be done without the amazing [pnarimani](https://github.com/pnarimani)'s unity [plugin](https://github.com/pnarimani/RTLTMPro).
-- New bookcover! Not as low-detail as previous ones, and looks pretty cool I think...
+## Public beta
+The DLC update broke text loading times once again. With help of a few fellow community members I found out that this only affects "large" unicode characters(read non-latin), so I decided to release a public beta for those who can read in english or whose alpabet consists mostly of latin characters
+
+Added:
+- 2 new book covers
+- experimental time slowdown effect while reading(check options)
+- disable interactions while reading. Look over the book to interact(can be reverted to old behavior, check options)
+
+Check [issues](#known-issues) for more info
+
 
 ## Pastime Reading
 Is a mod that allows you to [read a book](https://www.youtube.com/watch?v=MIUvKW89SgI) when there's nothing else to do in your 382-day sandbox.
@@ -22,12 +28,19 @@ To load your book, go to `../Mods/pastimeReading/` and paste your book in `book.
 If you are not sure how to add your books, or where to get them - check this neat [tutorial](https://github.com/HAHAYOUDEAD/PastimeReading/blob/main/Import%20Your%20Own%20Books/README.md) by [@Ancient Gatekeeper](https://github.com/GamingWubba93) 
 
 ## Customization
-There are 5 book covers to choose from. I didn't put too much effort in them, but hey - you can change them to your liking. There's even a text color control, more on that in textures folder Readme.
+There are 7 book covers to choose from. And you can create your own. There's even a text color control, more on that in textures folder Readme.
+
 ## Known Issues
-* I don't know much about encoding, so this might be incorrect. But, if you see squares instead of some special unicode symbols, try converting your book to UTF-8. To do that using Notepad++, open your book, select your encoding(likely Windows-1250) and convert to UTF-8. If you don't have Notepad++, you can try using any online tool. For example, [this one](https://subtitletools.com/convert-text-files-to-utf8-online) should work fine.
-* ~~Loading books takes time and memory. This is because I'm using TMPro to accurately split text into pages. For reference, 300kb text takes about 10 seconds to load. And something like 2mb text will hang until you run out of memory and crash the game. If you want to read long books - split them into smaller pieces before loading. For the time being, the mod can only read book.txt, so you'll have to replace it manually when it ends. There are reasons why I didn't make it so it would continue with book2.txt and so on, and laziness is not the main one.~~ Fixed with latest update of the game. 
-* Fov change when switching from book to lantern(probably some othe tools aswell). To avoid this - don't switch from book to lantern :smirk:. Holster the book first.
-* Not all cover designs are created equal.
+- Loading times are nuts with non-latin texts. Can't fix it yet, let's wait for another engine update
+
+- There are no sounds anymore. Fix will require switching to [AudioManager](https://github.com/DigitalzombieTLD/AudioManager), which will take a bit of time
+
+- Bug when going through loading screen while the book is out. I'll fix it, just not feeling like it at the moment :sweat_smile:
+
+- Doesn't work with [Personality](https://github.com/HAHAYOUDEAD/Personality), because it uses a separate arms mesh. Extremely annoying to fix since I need to redo all animations, but I should fix in eventually
+
+
+
 ## Shoutout
 [@DigitalzombieTLD](https://github.com/DigitalzombieTLD) for [FoxCompanion](https://github.com/DigitalzombieTLD/FoxCompanion) mod, I used it as a template. Probably nothing of it left in the code though.
 
