@@ -6,7 +6,7 @@ Added:
 - experimental time slowdown effect while reading(check options)
 - disable interactions while reading. Look over the book to interact(can be reverted to old behavior, check options)
 
-Check [issues](#known-issues) for more info
+Check [Known issues](#known-issues) for more info
 
 
 ## Pastime Reading
