@@ -12,9 +12,9 @@ using System.Runtime.InteropServices;
 //Version numbers in C# are a set of 1 to 4 positive integers separated by periods.
 //Mods typically use 3 numbers. For example: 1.2.1
 //The mod version need specified in three places.
-[assembly: AssemblyVersion("1.2.2")]
-[assembly: AssemblyFileVersion("1.2.2")]
-[assembly: MelonInfo(typeof(PastimeReading.ReadMain), "PastimeReading", "1.2.2", "Waltz", null)]
+[assembly: AssemblyVersion("1.2.3")]
+[assembly: AssemblyFileVersion("1.2.3")]
+[assembly: MelonInfo(typeof(PastimeReading.ReadMain), "PastimeReading", "1.2.3", "Waltz", null)]
 
 //This tells MelonLoader that the mod is only for The Long Dark.
 [assembly: MelonGame("Hinterland", "TheLongDark")]

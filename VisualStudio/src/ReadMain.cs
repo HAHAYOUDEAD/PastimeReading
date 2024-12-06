@@ -4,6 +4,7 @@
 	{
         // Main assets
         public static AssetBundle loadBundle;
+        public static AssetBundle loadBundle2;
         public static GameObject handsAsset;
         public static GameObject hands = null;
         public static Animator handsAnim;
@@ -63,10 +64,11 @@
         public static readonly float iteractionAllowanceAngle = 27f;
 
 
-        public override void OnApplicationStart()
+        public override void OnInitializeMelon()
 		{
             // Load main asset
             loadBundle = AssetBundle.LoadFromFile("Mods/pastimeReading/pastimeReadingAssets.ass");
+            loadBundle2 = AssetBundle.LoadFromFile("Mods/pastimeReading/handtex");
 			if (loadBundle == null)
 			{
 				MelonLogger.Msg(System.ConsoleColor.Yellow, "Failed to load AssetBundle");
@@ -155,27 +157,19 @@
             // applying vanilla texture to imported hands
             if (loadVanillaHands)
 			{
-                if (vanillaHandsF == null || vanillaHandsM == null)
-				{
-					GameObject meshes = GameObject.Find("CHARACTER_FPSPlayer/NEW_FPHand_Rig/GAME_DATA/Meshes");
-					vanillaHandsF = meshes.transform.FindChild("Astrid_Arms_NoRing").gameObject;
-					vanillaHandsM = meshes.transform.FindChild("Will_Hands").gameObject;
-				}
-				else
-				{
-                    //handsFMesh.GetComponent<SkinnedMeshRenderer>().material = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
-                    //handsFMesh.GetComponent<SkinnedMeshRenderer>().material = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
-                    handsFMesh.GetComponent<SkinnedMeshRenderer>().material.shader = ReadInstance.vanillaSkinShader;
-                    handsMMesh.GetComponent<SkinnedMeshRenderer>().material.shader = ReadInstance.vanillaSkinShader;
+
+                //handsFMesh.GetComponent<SkinnedMeshRenderer>().material = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+                //handsFMesh.GetComponent<SkinnedMeshRenderer>().material = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial;
+                handsFMesh.GetComponent<SkinnedMeshRenderer>().material.shader = ReadInstance.vanillaSkinShader;
+                handsMMesh.GetComponent<SkinnedMeshRenderer>().material.shader = ReadInstance.vanillaSkinShader;
 
 
-                    handsFMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = vanillaHandsF.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
-                    handsMMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = vanillaHandsM.GetComponent<SkinnedMeshRenderer>().sharedMaterial.mainTexture;
+                handsFMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = loadBundle2.LoadAsset<Texture>("Assets/HMF_FP_Hands_Astrid.png");
+                handsMMesh.GetComponent<SkinnedMeshRenderer>().material.mainTexture = loadBundle2.LoadAsset<Texture>("Assets/HMM_FP_Hands_Will.png");
 
-                    loadVanillaHands = false;
-				}
+
+                loadVanillaHands = false;
 			}
-
             if (!gameStarted) return;
 
             // defining flags to hide book when needed
@@ -206,7 +200,6 @@
                 }
 
             }
-
 
             if (usingBook)
             {
@@ -264,7 +257,6 @@
                 {
                     PageManager.IdleFluc();
                 }
-
                 // disgusting sound management
                 SoundManager.AnimatorStateDJ("book_open_idle_4", "playSound_scratch");
                 SoundManager.AnimatorStateDJ("open_book", "playSound_bookOpen");
@@ -311,7 +303,6 @@
                     PageManager.currentTurn = "prev";
                     handsAnim.SetTrigger("prev_page");
                 }
-
                 // interrupt if pulling up any other tool, interacting or in struggle
                 if ((GameManager.GetPlayerManagerComponent().m_ItemInHands != null || InputManager.HasInteractedThisFrame() || GameManager.GetPlayerStruggleComponent().InStruggle()) && currentState != "pocket") //  || ReadSettings.settingsChanged
                 {
@@ -344,7 +335,6 @@
             {
                 lockInteraction = false;
             }
-
             if (bookIsOpened)
             {
                 if (Settings.options.timeScale != 1f && Time.timeScale != Settings.options.timeScale) 
