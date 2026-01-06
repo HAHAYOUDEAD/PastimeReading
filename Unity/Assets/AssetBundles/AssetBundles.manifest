@@ -1,0 +1,9 @@
+ManifestFileVersion: 0
+UnityVersion: 6000.0.64f1
+CRC: 1592394466
+HashAppended: 0
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: pastimereadingassets
+      Dependencies: {}

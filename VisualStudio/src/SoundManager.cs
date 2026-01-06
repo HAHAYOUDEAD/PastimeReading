@@ -7,8 +7,8 @@
 
         public static void InitSounds()
 		{
-			AkSoundEngine.AddBasePath(ReadMain.modsPath);
-            AkSoundEngine.LoadFilePackage("pastimeReading/pastimeReadingSounds.pck", out uint num);
+			//AkSoundEngine.AddBasePath(Path.GetFullPath(typeof(MelonMod).Assembly.Location + "\\..\\..\\..\\Mods"));
+            //AkSoundEngine.LoadFilePackage("pastimeReading/pastimeReadingSounds.pck", out uint num);
             SoundManager.initDone = true;
 		}
 

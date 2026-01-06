@@ -66,17 +66,19 @@
 
         public override void OnInitializeMelon()
 		{
+            // Get Mods folder path
+            modsPath = Path.GetFullPath(typeof(MelonMod).Assembly.Location + "\\..\\..\\..\\Mods");
+
             // Load main asset
-            loadBundle = AssetBundle.LoadFromFile("Mods/pastimeReading/pastimeReadingAssets.ass");
-            loadBundle2 = AssetBundle.LoadFromFile("Mods/pastimeReading/handtex");
+            loadBundle = AssetBundle.LoadFromFile(modsPath + "/pastimeReading/pastimeReadingAssets.ass");
+            loadBundle2 = AssetBundle.LoadFromFile(modsPath + "/pastimeReading/handtex");
 			if (loadBundle == null)
 			{
 				MelonLogger.Msg(System.ConsoleColor.Yellow, "Failed to load AssetBundle");
 				return;
 			}
 
-            // Get Mods folder path
-            modsPath = Path.GetFullPath(typeof(MelonMod).Assembly.Location + "\\..\\..\\..\\Mods");
+
 
             // Load settings
             Settings.OnLoad();
@@ -258,12 +260,12 @@
                     PageManager.IdleFluc();
                 }
                 // disgusting sound management
-                SoundManager.AnimatorStateDJ("book_open_idle_4", "playSound_scratch");
-                SoundManager.AnimatorStateDJ("open_book", "playSound_bookOpen");
-                SoundManager.AnimatorStateDJ("close_book", "playSound_bookClose");
-                SoundManager.AnimatorStateDJ("bring_book", "playSound_bookBring");
-                SoundManager.AnimatorStateDJ("next_page", "playSound_pageNext");
-                SoundManager.AnimatorStateDJ("prev_page", "playSound_pagePrev");
+                //SoundManager.AnimatorStateDJAC("book_open_idle_4", "playSound_scratch");
+                //SoundManager.AnimatorStateDJAC("open_book", "playSound_bookOpen");
+                //SoundManager.AnimatorStateDJAC("close_book", "playSound_bookClose");
+                //SoundManager.AnimatorStateDJAC("bring_book", "playSound_bookBring");
+                //SoundManager.AnimatorStateDJAC("next_page", "playSound_pageNext");
+                //SoundManager.AnimatorStateDJAC("prev_page", "playSound_pagePrev");
 
                 // disable this section when closing book
                 StopOnBookClose();

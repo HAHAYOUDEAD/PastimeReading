@@ -1,4 +1,6 @@
-﻿namespace PastimeReading
+﻿using UnityEngine.TextCore.Text;
+
+namespace PastimeReading
 {
     public static class PageManager
     {
@@ -187,6 +189,7 @@
                     }
 
                     ReadMain.p1Text.overflowMode = TextOverflowModes.Page;
+
                     ReadMain.p1Text.m_text = chunkContents; // temporarily set to calculate pages via TMP
                     Utility.Log(CC.Gray, "ForceMeshUpdate - Start");
                     ReadMain.p1Text.ForceMeshUpdate(true);
